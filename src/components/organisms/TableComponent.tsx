@@ -1,8 +1,7 @@
-import { useSeatingChart } from "@/contexts/SeatingChartContext";
 import type { Table } from "@/models/Table";
 import type { Group as KonvaGroup } from "konva/lib/Group";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { forwardRef, useRef } from "react";
+import { forwardRef } from "react";
 import { Group, Rect } from "react-konva";
 import { SEAT_RADIUS, SeatComponent } from "../atoms/SeatComponent";
 
@@ -25,7 +24,10 @@ export const TableComponent = forwardRef<KonvaGroup, TableProps>(
         ref={ref}
         x={table.x}
         y={table.y}
+        width={table.width + SEAT_OFFSET * 2 + SEAT_RADIUS * 2 - 2}
+        height={table.height + SEAT_OFFSET * 2 + SEAT_RADIUS * 2 - 2}
         draggable={draggable}
+        name="table-group"
         onDragEnd={onDragEnd}
         onClick={onTableClick}
         onTap={onTableClick}

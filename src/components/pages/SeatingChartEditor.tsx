@@ -3,8 +3,15 @@ import { TableComponent } from "@/components/organisms/TableComponent";
 import { useSeatingChart } from "@/contexts/SeatingChartContext";
 import { defaultRectangleTable } from "@/data/rectangleTable";
 import type { Table } from "@/models/Table";
+import {
+  drawGuides,
+  getGuides,
+  getLineGuideStops,
+  getObjectSnappingEdges,
+} from "@/utils/konvaSnapping";
+import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { useCallback, useState } from "react";
+import { useCallback, useRef } from "react";
 import { Layer, Stage } from "react-konva";
 
 export const SeatingChartEditor = () => {
@@ -14,36 +21,72 @@ export const SeatingChartEditor = () => {
     setSelectedTableId,
     addTable,
     updateTablePosition,
-    deleteTable,
   } = useSeatingChart();
-  const [isAddingTable, setIsAddingTable] = useState(false);
+  const layerRef = useRef<Konva.Layer>(null);
 
   const handleStageClick = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       const clickedOnEmpty = e.target === e.target.getStage();
 
-      if (isAddingTable && clickedOnEmpty) {
-        const stage = e.target.getStage();
-        if (!stage) return;
-
-        const pointerPos = stage.getPointerPosition();
-        if (!pointerPos) return;
-
-        const newTable: Table = {
-          id: `table-${Date.now()}`,
-          x: pointerPos.x - 100,
-          y: pointerPos.y - 60,
-          ...defaultRectangleTable,
-        };
-
-        addTable(newTable);
-        setIsAddingTable(false);
-      } else if (clickedOnEmpty) {
+      if (clickedOnEmpty) {
         setSelectedTableId(null);
       }
     },
-    [isAddingTable, addTable, setSelectedTableId]
+    [setSelectedTableId]
   );
+
+  const handleLayerDragMove = useCallback((e: KonvaEventObject<DragEvent>) => {
+    const layer = layerRef.current;
+    const stage = e.target.getStage();
+    if (!layer || !stage) return;
+
+    const node = e.target;
+    // Only handle table groups
+    if (node.name() !== "table-group") return;
+
+    // Clear previous guide lines
+    layer.find(".guid-line").forEach((l) => l.destroy());
+
+    // Find possible snapping lines
+    const lineGuideStops = getLineGuideStops(stage, node);
+    // Find snapping points of current object
+    const itemBounds = getObjectSnappingEdges(node);
+
+    // Now find where can we snap current object
+    const guides = getGuides(lineGuideStops, itemBounds);
+
+    // Do nothing if no snapping
+    if (guides.length === 0) {
+      return;
+    }
+
+    // Draw guide lines
+    drawGuides(layer, guides);
+
+    // Apply snapping by adjusting absolute position
+    const absPos = node.absolutePosition();
+    guides.forEach((lg) => {
+      switch (lg.orientation) {
+        case "V": {
+          absPos.x = lg.lineGuide + lg.offset;
+          break;
+        }
+        case "H": {
+          absPos.y = lg.lineGuide + lg.offset;
+          break;
+        }
+      }
+    });
+    node.absolutePosition(absPos);
+  }, []);
+
+  const handleLayerDragEnd = useCallback(() => {
+    const layer = layerRef.current;
+    if (!layer) return;
+
+    // Clear all guide lines
+    layer.find(".guid-line").forEach((l) => l.destroy());
+  }, []);
 
   const handleStageDrop = useCallback(
     (e: React.DragEvent) => {
@@ -89,11 +132,6 @@ export const SeatingChartEditor = () => {
     [setSelectedTableId]
   );
 
-  const handleDeleteTable = useCallback(() => {
-    if (!selectedTableId) return;
-    deleteTable(selectedTableId);
-  }, [selectedTableId, deleteTable]);
-
   return (
     <main className="flex flex-1 overflow-hidden">
       <section
@@ -102,13 +140,16 @@ export const SeatingChartEditor = () => {
         className="flex-1"
       >
         <Stage
-          key={Date.now()}
           width={window.innerWidth - 400}
           height={window.innerHeight - 200}
           onClick={handleStageClick}
           onTap={handleStageClick}
         >
-          <Layer>
+          <Layer
+            ref={layerRef}
+            onDragMove={handleLayerDragMove}
+            onDragEnd={handleLayerDragEnd}
+          >
             {tables.map((table) => (
               <TableComponent
                 key={table.id}
