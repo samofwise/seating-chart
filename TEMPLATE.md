@@ -34,13 +34,13 @@ GitHub automatically replaces these variables when you create a repository from 
 - `{{ repo }}` → Your repository name
 - `{{ owner }}` → Your GitHub username/organization
 - `{{ name }}` → Same as `{{ repo }}`
-- `{{ description }}` → Repository description (if provided)
+- `Seating Chart` → Repository description (if provided)
 
 ### What Gets Replaced
 
 - **package.json**: `"name": "{{ repo | downcase }}"` → Your repository name in lowercase (for npm package name)
-- **index.html**: `<title>{{ description }}</title>` → Repository description (for display title)
-- **README.md**: `# {{ description }}` → Repository description (for main heading)
+- **index.html**: `<title>Seating Chart</title>` → Repository description (for display title)
+- **README.md**: `# Seating Chart` → Repository description (for main heading)
 
 ## Workspace File
 

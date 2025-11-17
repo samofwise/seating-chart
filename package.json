@@ -1,5 +1,5 @@
 {
-  "name": "{{ repo | downcase }}",
+  "name": "seating-chart",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "konva": "^10.0.9",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-konva": "^19.2.0"
   },
   "devDependencies": {
     "@html-eslint/eslint-plugin": "^0.48.0",
@@ -21,8 +23,8 @@
     "@samhenrytech/eslint-config": "1.x",
     "@tailwindcss/vite": "^4.1.0",
     "@types/node": "^24.10.1",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.1",
     "jiti": "^2.6.1",
     "prettier": "^3.6.2",

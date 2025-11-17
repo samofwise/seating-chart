@@ -1,5 +1,10 @@
 import { Home } from "./components/pages/Home";
+import { SeatingChartProvider } from "./contexts/SeatingChartContext";
 
-const App = () => <Home />;
+const App = () => (
+  <SeatingChartProvider>
+    <Home />
+  </SeatingChartProvider>
+);
 
 export default App;

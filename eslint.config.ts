@@ -18,7 +18,7 @@ export default [
       },
     },
     rules: {
-      // Your custom rules here
+      "@typescript-eslint/no-unused-vars": "warn",
     },
   },
 ];

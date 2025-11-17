@@ -39,5 +39,6 @@
     "[markdown]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
+    "editor.rulers": [{ "column": 110 }],
   },
 }

@@ -1,0 +1,4 @@
+IN shared repo
+- update to react 19
+- update prettier print width to 110
+- Add ruler 110 to code-workspace
