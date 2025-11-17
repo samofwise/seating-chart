@@ -27,7 +27,7 @@ export const SeatComponent = ({
     x={x}
     y={y}
     radius={SEAT_RADIUS}
-    fill="#4B5563"
+    fill="#FFFFFF"
     stroke="#1F2937"
     strokeWidth={2}
     onClick={() => onSeatClick?.(tableId, seatIndex, edge)}

@@ -45,6 +45,34 @@ export const SeatingChartEditor = () => {
     [isAddingTable, addTable, setSelectedTableId]
   );
 
+  const handleStageDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const stage = e.currentTarget as HTMLCanvasElement;
+      const rect = stage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const data = e.dataTransfer.getData("text/plain");
+      if (data === "rectangle-table") {
+        const newTable: Table = {
+          id: `table-${Date.now()}`,
+          x: x - defaultRectangleTable.width / 2,
+          y: y - defaultRectangleTable.height / 2,
+          ...defaultRectangleTable,
+        };
+
+        addTable(newTable);
+      }
+    },
+    [addTable]
+  );
+
+  const handleStageDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  }, []);
+
   const handleTableDragEnd = useCallback(
     (tableId: string) => (e: KonvaEventObject<DragEvent>) => {
       const node = e.target;
@@ -68,24 +96,30 @@ export const SeatingChartEditor = () => {
 
   return (
     <main className="flex flex-1 overflow-hidden">
-      <Stage
-        width={window.innerWidth - 400}
-        height={window.innerHeight - 200}
-        onClick={handleStageClick}
-        onTap={handleStageClick}
+      <div
+        onDrop={handleStageDrop}
+        onDragOver={handleStageDragOver}
+        className="flex-1"
       >
-        <Layer>
-          {tables.map((table) => (
-            <TableComponent
-              key={table.id}
-              table={table}
-              onDragEnd={handleTableDragEnd(table.id)}
-              onTableClick={handleTableClick(table.id)}
-              isSelected={table.id === selectedTableId}
-            />
-          ))}
-        </Layer>
-      </Stage>
+        <Stage
+          width={window.innerWidth - 400}
+          height={window.innerHeight - 200}
+          onClick={handleStageClick}
+          onTap={handleStageClick}
+        >
+          <Layer>
+            {tables.map((table) => (
+              <TableComponent
+                key={table.id}
+                table={table}
+                onDragEnd={handleTableDragEnd(table.id)}
+                onTableClick={handleTableClick(table.id)}
+                isSelected={table.id === selectedTableId}
+              />
+            ))}
+          </Layer>
+        </Stage>
+      </div>
 
       <SettingsPane />
     </main>

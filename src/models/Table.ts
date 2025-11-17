@@ -1,7 +1,7 @@
 import type { Seating } from "./Seating";
 
 export interface Table {
-  id: string;
+  id?: string;
   x: number;
   y: number;
   width: number;
