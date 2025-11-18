@@ -15,7 +15,6 @@ export const TableComponent = ({
   draggable = true,
 }: TableProps) => {
   const selectorPosition = getSelectorPosition(table);
-
   return (
     <Group
       className="cursor-grab"
@@ -184,7 +183,7 @@ const getSelectorPosition = (table: Table) => {
   };
 };
 
-interface BoxLocation {
+interface SelectorPosition {
   x: number;
   y: number;
   width: number;
@@ -192,11 +191,11 @@ interface BoxLocation {
 }
 
 const CORNER_SIZE = 5;
-const getSelectorCorners = (selectorBox: BoxLocation) => {
-  const x = selectorBox.x - SELECTOR_STROKE_WIDTH / 2;
-  const y = selectorBox.y - SELECTOR_STROKE_WIDTH / 2;
-  const width = selectorBox.width;
-  const height = selectorBox.height;
+const getSelectorCorners = (selectorPosition: SelectorPosition) => {
+  const x = selectorPosition.x - SELECTOR_STROKE_WIDTH / 2;
+  const y = selectorPosition.y - SELECTOR_STROKE_WIDTH / 2;
+  const width = selectorPosition.width;
+  const height = selectorPosition.height;
   return (
     <>
       <Rect
